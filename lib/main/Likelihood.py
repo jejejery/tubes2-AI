@@ -4,7 +4,8 @@ implementasi dari fungsi likelihood untuk melakukan perhitungan likelihood suatu
 prerequisite: data sudah dilakukan preprocessing
 
 input:
-    dataframe: pandas dataframe dari dataset yang ingin dihitung likelihoodnya
+    X: pandas dataframe dari fitur
+    y: pandas dataframe dari target
     fitur: nama kolom fitur yang ingin dihitung likelihoodnya
     target: nama kolom target yang bersesuaian dengan kolom fitur
     tipe_fitur: tipe fitur yang ingin dihitung likelihoodnya ("categorical" atau "numerikal" atau "gaussian")
@@ -12,12 +13,13 @@ input:
 """
 class Likelihood:
     
-    def __init__(self, dataframe, fitur, target, tipe_fitur):
+    def __init__(self, X, y, fitur, target, tipe_fitur):
         try:
             self.fitur = fitur
             self.target = target
             self.tipe_fitur = tipe_fitur
-            self.dataframe = dataframe[[self.fitur, self.target]]
+            self.X = X
+            self.y = y
         except:
             print("error in init Likelihood")
             raise

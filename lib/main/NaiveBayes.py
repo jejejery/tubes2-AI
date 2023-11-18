@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import Likelihood as lk
+import lib.main.Likelihood as lk
 
 class NaiveBayes:
     """
@@ -55,15 +55,15 @@ class NaiveBayes:
 
         """
         Komponen untuk menghitung posterior probability
-        dimana posterior probability = prior probability * likelihood
+        dimana log_posterior probability = log_prior_probability + log_likelihood
         dengan operator * merupakan operasi perkalian element-wise pada numpy array
 
         prior_probs: array-like, shape = [n_classes]
-            Prior probabilities -> merupakan probabilitas dari masing-masing nilai unik dari kolom target
-        likehoods: array-like of array-like, shape = [n_classes, n_features]
+            Prior probabilities -> merupakan probabilitas dari masing-masing nilai unik dari kolom target (dalam log probability)
+        likehoods: array-like of array-like, shape = [n_features]
             Mendefinisikan OBJEK likelihoods yang telah didefinisikan pada class Likelihood
             akan dipanggil pada method "fit" untuk menginisiasi fungsi likelihood
-            akan digunakan sebagai komponen untuk menghitung posterior probability pada method "predict"
+            akan digunakan sebagai komponen untuk menghitung posterior probability pada method "predict" -> akan mereturn vector likelihood
         """
         self.prior_probs = []
         self.likehoods = []
@@ -76,11 +76,33 @@ class NaiveBayes:
     #     print("Hello from NaiveBayes moduleee !")
 
 
-    #will be implemented later
+    """
+    X: pandas dataframe kolom fitur
+    y: nama kolom target pada dataframe X (dalam bentuk pandas series)
+    """
+
     def fit(self, X, y):
-        return None
-    
+        print("fitting NaiveBayes")
+
+        #1. Kalkulasi prior probability
+        if(self.prior_probs is None):
+            self.prior_probs = self.count_prior_probs(y)
+
+
+    """
+    y: pandas series dari kolom target
+    """
+    def count_prior_probs(self, y):
+        prior_probs = []
+        for target in y.unique():
+            prior_probs.append(y[y == target].count()/y.count())
+        return np.log(prior_probs)
     #will be implemented later
+    """
+    input:
+        X: data yang ingin diprediksi, contoh X =<p1, p2, p3, p4, p5> , suatu vektor yang akan memprediksi nilai target Y berdasarkan fit
+        y: nilai prediksi berdasarkan fitur X, contoh: y = 1 atau y = 0 (kasus binary classification)
+    """
     def predict(self, X):
         return None
 
