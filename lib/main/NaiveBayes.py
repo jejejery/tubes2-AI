@@ -21,7 +21,7 @@ class NaiveBayes:
     @param epsilon: float, optional (default=1e-9)
         Epsilon untuk smoothing dan menghindari pembagian dengan nol
     """
-    def __init__(self, categorical_features=None, gaussian_features = None, non_gaussian_features = None, alpha=1, 
+    def __init__(self, categorical_features=[], gaussian_features = [], non_gaussian_features = [], alpha=1, 
                  prior_probs=None, epsilon=1e-9):
         
         self.alpha = alpha
