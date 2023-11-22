@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 from lib.main.Likelihood import Likelihood
 
-class NaiveBayes:
+class CategoricalNaiveBayes:
     """
-    Naive Bayes classifier untuk model multivariat bernoulli, multinomial dan gaussian
+    Naive Bayes classifier untuk proses bernoulli (Kategorikal)
     """
 
     """
@@ -12,8 +12,8 @@ class NaiveBayes:
         Apabila suatu fitur numerik yang memenuhi tresshold tertentu (misal 10 unique values) maka fitur tersebut dapat dianggap sebagai fitur kategorikal
     @param gaussian_features: array-like, shape = [n_features]. contoh seperti di atas
         Indices of gaussian features for continuous feature.
-    @param non_gaussian_features: array-like, shape = [n_features]. contoh seperti di atas
-        Indices of non gaussian features for continuous feature. 
+    @param numerical_features: array-like, shape = [n_features]. contoh seperti di atas
+        Indices of non gaussian features for continuous feature. Using discritization method
     @param alpha: float, optional (default=1.0)
         Smoothing untuk kalkulasi likelihood
     @param prior_probs: array-like, shape = [n_classes]
@@ -21,12 +21,13 @@ class NaiveBayes:
     @param epsilon: float, optional (default=1e-9)
         Epsilon untuk smoothing dan menghindari pembagian dengan nol
     """
-    def __init__(self, categorical_features=[], gaussian_features = [], non_gaussian_features = [], alpha=1, 
-                 prior_probs=None, epsilon=1e-9):
+    def __init__(self, categorical_features=[], gaussian_features = [], numerical_features = [], alpha=1, 
+                 prior_probs=None, epsilon=1e-9, kernel = False):
         
         self.alpha = alpha
         self.prior_probs = prior_probs
         self.epsilon = epsilon
+        self.kernel_method = kernel
 
         """
         Variabel untuk menyimpan nilai dari masing-masing fitur
@@ -46,7 +47,7 @@ class NaiveBayes:
         """
         self.categorical_features = categorical_features
         self.gaussian_features = gaussian_features
-        self.non_gaussian_features = non_gaussian_features
+        self.numerical_features = numerical_features
 
         """
         Komponen untuk menghitung posterior probability
@@ -76,7 +77,7 @@ class NaiveBayes:
     y: np.array kolom target, 1 dimensi
     """
 
-    def fit(self, X, y):
+    def fit(self, X : any, y : any):
         print("fitting NaiveBayes")
         #jika X masih berupa pandas dataframe, maka akan diubah menjadi numpy array
         if isinstance(X, pd.DataFrame):
@@ -98,25 +99,26 @@ class NaiveBayes:
     y: np.array kolom target, 1 dimensi
     """
     def build_likelihoods(self, X, y):
-        
-        likelihoods = []
-        for i in range(X.shape[1]):
-            if i in self.categorical_features:
-                likelihoods.append(Likelihood(X[:, i], y, "categorical", self.alpha))
-            elif i in self.gaussian_features:
-                likelihoods.append(Likelihood(X[:, i], y, "gaussian", self.alpha))
-            elif i in self.non_gaussian_features:
-                likelihoods.append(Likelihood(X[:, i], y, "numerikal", self.alpha))
-            else:
-                print("error in build_likelihoods")
-                raise Exception("error in build_likelihoods")
-        return likelihoods
-    
+        try:
+            likelihoods = []
+            for i in range(X.shape[1]):
+                if i in self.categorical_features:
+                    likelihoods.append(Likelihood(X[:, i], y, "categorical", self.alpha))
+                elif i in self.gaussian_features:
+                    likelihoods.append(Likelihood(X[:, i], y, "gaussian", self.alpha))
+                elif i in self.numerical_features:
+                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method))
+                else:
+                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method))
+            return likelihoods
+        except Exception as e:
+            print("error in build_likelihoods")
+            raise e
 
     """
     X: np.array 2 dimensi, data yang ingin dilakukan fitting
     """
-    def predict(self, X):
+    def predict(self, X) -> np.array:
         if isinstance(X, pd.DataFrame):
             X = X.values
         if not self._is_fitted:
@@ -127,7 +129,7 @@ class NaiveBayes:
        
         
 
-    def posterior_probability(self, X):
+    def posterior_probability(self, X) -> np.array:
         the_posteriors = None
         for i in range(X.shape[1]):
             if(i == 0):
@@ -156,3 +158,14 @@ class NaiveBayes:
     """
     def debug():
         print("debugging NaiveBayes module")
+
+
+class GaussianNaiveBayes:
+    """
+    Yah ini kek sklearn GaussianNB oke :v
+    Naive Bayes classifier untuk proses gaussian
+    """
+    
+    @staticmethod
+    def hello_world():
+        print("Hello from GaussianNaiveBayes module")
