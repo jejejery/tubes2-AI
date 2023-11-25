@@ -198,9 +198,9 @@ class GaussianNaiveBayes:
                 if i in self.gaussian_features:
                     likelihoods.append(Likelihood(X[:, i], y, "gaussian", self.alpha))
                 elif i in self.numerical_features:
-                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method))
+                    likelihoods.append(Likelihood(X[:, i], y, "gaussian", alpha=self.alpha, the_kernel=self.kernel_method))
                 else:
-                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method))
+                    likelihoods.append(Likelihood(X[:, i], y, "gaussian", alpha=self.alpha, the_kernel=self.kernel_method))
             return likelihoods
         except Exception as e:
             print("error in build_likelihoods")

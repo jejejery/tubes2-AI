@@ -110,6 +110,27 @@ class Likelihood:
             print("error in count_likelihood_numerikal")
             raise
     
+    def count_likelihood_gaussian(self, value):
+        try:
+            unique_val = np.unique(self.y)  # nilai unik dari kolom target
+            likelihood = []  # vector likelihood
+
+            for uval in unique_val:
+                loc = np.where(self.y == uval)[0]
+                Xi_val = self.Xi[loc]
+
+                mean = np.mean(Xi_val)
+                var = np.var(Xi_val) + self.epsilon
+
+                # Menghitung likelihood menggunakan rumus distribusi Gaussian
+                likelihood_class = (1 / np.sqrt(2 * np.pi * var)) * np.exp(-((value - mean) ** 2) / (2 * var))
+                likelihood.append(likelihood_class)
+
+            return np.log(np.array(likelihood)).T
+        except Exception as e:
+            print("error in count_likelihood_gaussian")
+            raise e
+
     """
     count probability of the test data
     test_data : np.array 1 dimensi
