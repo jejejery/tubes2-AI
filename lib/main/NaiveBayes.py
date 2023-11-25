@@ -162,10 +162,92 @@ class CategoricalNaiveBayes:
 
 class GaussianNaiveBayes:
     """
-    Yah ini kek sklearn GaussianNB oke :v
-    Naive Bayes classifier untuk proses gaussian
+    Naive Bayes classifier untuk proses Gaussian.
     """
+
+    def __init__(self, gaussian_features = [], numerical_features = [], alpha=1, 
+                 prior_probs=None, epsilon=1e-9, kernel = False):
+        
+        self.alpha = alpha
+        self.prior_probs = prior_probs
+        self.epsilon = epsilon
+        self.kernel_method = kernel
+
+        self.var_smoothing = epsilon
+        self.num_features = 0
+        self._is_fitted = False
+        
+        self.gaussian_features = gaussian_features
+        self.numerical_features = numerical_features
+
+        self.prior_probs = None
+        self.likelihoods = None
+        self.posteriors = None
+
+    def _check_input(self, X, y):
+        if isinstance(X, pd.DataFrame):
+            X = X.values
+        if isinstance(y, pd.Series):
+            y = y.values
+        return X, y
     
+    def build_likelihoods(self, X, y):
+        try:
+            likelihoods = []
+            for i in range(X.shape[1]):
+                if i in self.gaussian_features:
+                    likelihoods.append(Likelihood(X[:, i], y, "gaussian", self.alpha))
+                elif i in self.numerical_features:
+                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method))
+                else:
+                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method))
+            return likelihoods
+        except Exception as e:
+            print("error in build_likelihoods")
+            raise e
+
+    def fit(self, X, y):
+        # Konversi X dan y ke numpy array jika masih dalam bentuk DataFrame atau Series
+        X, y = self._check_input(X, y)
+
+        self.prior_probs = self.count_prior_probs(y)
+        self.likelihoods = self.build_likelihoods(X,y)
+        
+        self._is_fitted = True
+
+    def _check_X_input(self, X):
+        if isinstance(X, pd.DataFrame):
+            X = X.values
+        return X
+
+    def predict(self, X):
+        if not self._is_fitted:
+            raise Exception("Model belum di fit")
+
+        X = self._check_X_input(X)
+        posteriors = self.posterior_probability(X)
+        return np.argmax(posteriors, axis=1)
+
+    def posterior_probability(self, X):
+        the_posteriors = None
+        for i in range(X.shape[1]):
+            if(i == 0):
+                the_posteriors = self.likelihoods[i].count_likelihood(X[:, i])
+            else:
+                the_posteriors = the_posteriors + self.likelihoods[i].count_likelihood(X[:, i])
+        the_posteriors = the_posteriors + self.prior_probs
+        return the_posteriors
+
+    def count_prior_probs(self, y):
+        log_prior_probs = []
+        unique_val = np.unique(y)
+        for uval in unique_val:
+            loc = np.where(y == uval)[0]
+            log_prior_probs.append(len(loc)/len(y))
+        return np.log(log_prior_probs).squeeze()
+
+    
+
     @staticmethod
     def hello_world():
         print("Hello from GaussianNaiveBayes module")
