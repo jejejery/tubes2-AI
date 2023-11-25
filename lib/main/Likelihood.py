@@ -15,7 +15,7 @@ input:
 """
 class Likelihood:
     
-    def __init__(self, Xi, y, tipe_fitur, alpha=1, the_kernel = False, epsilon=1e-9):
+    def __init__(self, Xi, y, tipe_fitur, alpha=1, the_kernel = False, epsilon=1e-9, scott_rule = True):
         try:
             self.Xi = Xi
             self.y = y
@@ -25,6 +25,7 @@ class Likelihood:
             self.alpha = alpha
             self.kernel_method = the_kernel
             self.epsilon = epsilon
+            self.scrot_rule = scott_rule
         except:
             print("error in init Likelihood")
             raise
@@ -145,15 +146,22 @@ class Likelihood:
             prob[prob < self.epsilon] = self.epsilon
             return prob
         else:
-            size = len(train_data)
-            std_dev = np.std(train_data)
-            bin_width = 3.5 * std_dev / np.power(size, 1/3)
-            num_bins = int(np.ceil((np.max(train_data) - np.min(train_data)) / bin_width))
             min_val = train_data.min()
             max_val = train_data.max()
-            x_axis = np.arange(min_val, max_val, bin_width)
-            y_axis = np.array([np.sum((train_data >= x) & (train_data < x + bin_width)) for x in x_axis])
-
+            if(self.scrot_rule):
+                size = len(train_data)
+                std_dev = np.std(train_data)
+                bin_width = 3.5 * std_dev / np.power(size, 1/3)
+                num_bins = int(np.ceil((np.max(train_data) - np.min(train_data)) / bin_width))
+                
+                x_axis = np.arange(min_val, max_val, bin_width)
+                y_axis = np.array([np.sum((train_data >= x) & (train_data < x + bin_width)) for x in x_axis])
+            else:
+                size = len(train_data)
+                num_bins = int(np.sqrt(size))
+                x_axis = np.linspace(min_val, max_val, num_bins)
+                #create sum array, ignore the last value
+                y_axis = np.array([np.sum((train_data >= x) & (train_data < x + (max_val - min_val) / num_bins)) for x in x_axis])
             #calculate probability for each test data using histogram above
             y_index = np.digitize(test_data, x_axis, right=False)
             #the index start from 1, so we need to substract 1
@@ -170,4 +178,5 @@ class Likelihood:
             #perform laplace smoothing
             denominator = np.sum(y_axis) + (alpha * num_bins)
             return (freq + alpha) / denominator
+
     

@@ -10,8 +10,6 @@ class CategoricalNaiveBayes:
     """
     @param categorical_features: array-like, shape = [n_features]. contoh np.array([0, 1, 2, 3, 4]) -> 0, 1, 2, 3, 4 merupakan lokasi dari fitur kategorikal pada data
         Apabila suatu fitur numerik yang memenuhi tresshold tertentu (misal 10 unique values) maka fitur tersebut dapat dianggap sebagai fitur kategorikal
-    @param gaussian_features: array-like, shape = [n_features]. contoh seperti di atas
-        Indices of gaussian features for continuous feature.
     @param numerical_features: array-like, shape = [n_features]. contoh seperti di atas
         Indices of non gaussian features for continuous feature. Using discritization method
     @param alpha: float, optional (default=1.0)
@@ -21,13 +19,14 @@ class CategoricalNaiveBayes:
     @param epsilon: float, optional (default=1e-9)
         Epsilon untuk smoothing dan menghindari pembagian dengan nol
     """
-    def __init__(self, categorical_features=[], gaussian_features = [], numerical_features = [], alpha=1, 
-                 prior_probs=None, epsilon=1e-9, kernel = False):
+    def __init__(self, categorical_features=[], numerical_features = [], alpha=1, 
+                 prior_probs=None, epsilon=1e-9, kernel = False, scott_rule = True):
         
         self.alpha = alpha
         self.prior_probs = prior_probs
         self.epsilon = epsilon
         self.kernel_method = kernel
+        self.scott_rule = scott_rule
 
         """
         Variabel untuk menyimpan nilai dari masing-masing fitur
@@ -46,7 +45,6 @@ class CategoricalNaiveBayes:
         contoh jelas seperti di atas, sebuah np.array yang menunjukkan index dari fitur kategorikal, gaussian, dan non gaussian
         """
         self.categorical_features = categorical_features
-        self.gaussian_features = gaussian_features
         self.numerical_features = numerical_features
 
         """
@@ -104,12 +102,10 @@ class CategoricalNaiveBayes:
             for i in range(X.shape[1]):
                 if i in self.categorical_features:
                     likelihoods.append(Likelihood(X[:, i], y, "categorical", self.alpha))
-                elif i in self.gaussian_features:
-                    likelihoods.append(Likelihood(X[:, i], y, "gaussian", self.alpha))
                 elif i in self.numerical_features:
-                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method))
+                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method, scott_rule=self.scott_rule))
                 else:
-                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method))
+                    likelihoods.append(Likelihood(X[:, i], y, "numerikal", alpha=self.alpha, the_kernel=self.kernel_method, scott_rule=self.scott_rule))
             return likelihoods
         except Exception as e:
             print("error in build_likelihoods")
