@@ -1,5 +1,7 @@
-from sklearn.neighbors import KernelDensity
+# from sklearn.neighbors import KernelDensity
+from scipy.stats import gaussian_kde
 import numpy as np
+
 
 """
 implementasi dari fungsi likelihood untuk melakukan perhitungan likelihood suatu data
@@ -140,10 +142,10 @@ class Likelihood:
     """
     def discretitation_probabilities(self, test_data : np.array, train_data: np.array, alpha: float) -> np.array:
         if(self.kernel_method):
-            kde = KernelDensity(kernel='gaussian', bandwidth=1).fit(train_data.reshape([-1,1]))
+            kde = gaussian_kde(train_data, 'silverman')
             #handle 0 probability value with epsilon
-            prob = np.exp(kde.score_samples(test_data.reshape([-1,1])))
-            prob[prob < self.epsilon] = self.epsilon
+            prob = kde(test_data)
+            # prob[prob < self.epsilon] = self.epsilon
             return prob
         else:
             min_val = train_data.min()
