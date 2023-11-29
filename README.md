@@ -7,7 +7,7 @@ Accuracy score prediksi yang didapatkan berdasarkan metode K-Nearest Neighbor, N
 |Classifier|Accuracy score|
 |----|-------|
 |KNN SKLearn |0.801667 |
-|KNN | 0.801667 |
+|KNN | 0.93 |
 |Naive-Bayes SKLearn (GaussianNB) | 0.778333 |
 |Naive-Bayes Categorical | 0.728333 |
 |Naive-Bayes Discretization | 0.72 |
