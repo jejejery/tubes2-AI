@@ -2,6 +2,4 @@ lib/__pycache__
 lib/main/__pycache__
 lib/helper/__pycache__
 lib/preprocessing/__pycache__
-data_train.csv
-data_validation.csv
 test.ipynb

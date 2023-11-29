@@ -81,7 +81,10 @@ class Likelihood:
                 # oleh karena itu, gunakan laplace smoothing dengan alpha
                 numerator = np.array([np.sum(Xi_val == elem) for elem in value + self.alpha])
                 denominator = len(Xi_val) + self.alpha * Xi_unique
-                likelihood.append( numerator/ (denominator))
+                the_likelihood = numerator / denominator
+                # handle 0 probability value with epsilon
+                the_likelihood[the_likelihood < self.epsilon] = self.epsilon
+                likelihood.append(the_likelihood)
             return np.log(likelihood).T
         except:
             print("error in count_likelihood_categorical")

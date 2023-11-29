@@ -1,13 +1,20 @@
 # Implementasi Algoritma K-Nearest Neighbor dan Naive Bayes Sebagai Prediktor Kelas Harga Ponsel
 
+Repository ini dibuat untuk memenuhi Tugas Besar 2 Intelegensia Buatan IF3170 untuk melakukan prediksi kelas harga ponsel
+
 ## Hasil prediksi
 Accuracy score prediksi yang didapatkan berdasarkan metode K-Nearest Neighbor, Naive Bayes dan Gaussian Naive Bayes adalah:
 |Classifier|Accuracy score|
 |----|-------|
-|KNN (tanpa preprocessing) | |
-|KNN | 0.8016666666666666|
-|Naive Bayes- Discretization | 0.7216666666666667|
-|Gaussian Naive Bayes | 0.7783333333333333|
+|KNN SKLearn |0.801667 |
+|KNN | 0.801667 |
+|Naive-Bayes SKLearn (GaussianNB) | 0.778333 |
+|Naive-Bayes Categorical | 0.728333 |
+|Naive-Bayes Discretization | 0.72 |
+|Naive Bayes Gaussian | 0.778333 |
+|Naive Bayes Kernel Density Estimation| 0.776667 |
+
+Accuracy di atas dilakukan tanpa melakukan preprocessing (kecuali menghilangkan data outlier) dengan train set : 1400 baris dan valid set: 600 baris
 
 ## Requirement
 Library yang dibutuhkan pada program ini adalah:
