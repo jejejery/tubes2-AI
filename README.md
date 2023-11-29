@@ -6,7 +6,7 @@ Repository ini dibuat untuk memenuhi Tugas Besar 2 Intelegensia Buatan IF3170 un
 Accuracy score prediksi yang didapatkan berdasarkan metode K-Nearest Neighbor, Naive Bayes dan Gaussian Naive Bayes adalah:
 |Classifier|Accuracy score|
 |----|-------|
-|KNN SKLearn |0.801667 |
+|KNN SKLearn |0.93 |
 |KNN | 0.93 |
 |Naive-Bayes SKLearn (GaussianNB) | 0.778333 |
 |Naive-Bayes Categorical | 0.728333 |
