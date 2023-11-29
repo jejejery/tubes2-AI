@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from lib.main.Likelihood import Likelihood
 
-class CategoricalNaiveBayes:
+class NaiveBayes:
     """
     Naive Bayes classifier untuk proses bernoulli (Kategorikal)
     """

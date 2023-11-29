@@ -27,7 +27,7 @@ class Likelihood:
             self.alpha = alpha
             self.kernel_method = the_kernel
             self.epsilon = epsilon
-            self.scrot_rule = scott_rule
+            self.scott_rule = scott_rule
         except:
             print("error in init Likelihood")
             raise
@@ -78,9 +78,8 @@ class Likelihood:
                 Xi_unique = len(np.unique(self.Xi))
                 # menghitung likelihood value terhadap Xi_val (data yang memiliki nilai val pada kolom target)
                 # likelihood mungkin bernilai 0 jika tidak ada data yang memiliki nilai val pada kolom target
-                # oleh karena itu, gunakan laplace smoothing dengan alp
-                # ha = 1
-                numerator = np.array([np.sum(Xi_val == elem) for elem in value])
+                # oleh karena itu, gunakan laplace smoothing dengan alpha
+                numerator = np.array([np.sum(Xi_val == elem) for elem in value + self.alpha])
                 denominator = len(Xi_val) + self.alpha * Xi_unique
                 likelihood.append( numerator/ (denominator))
             return np.log(likelihood).T
@@ -150,7 +149,7 @@ class Likelihood:
         else:
             min_val = train_data.min()
             max_val = train_data.max()
-            if(self.scrot_rule):
+            if(self.scott_rule):
                 size = len(train_data)
                 std_dev = np.std(train_data)
                 bin_width = 3.5 * std_dev / np.power(size, 1/3)

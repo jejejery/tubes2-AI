@@ -6,7 +6,7 @@ Accuracy score prediksi yang didapatkan berdasarkan metode K-Nearest Neighbor, N
 |----|-------|
 |KNN (tanpa preprocessing) | |
 |KNN | 0.8016666666666666|
-|Naive Bayes | 0.7216666666666667|
+|Naive Bayes- Discretization | 0.7216666666666667|
 |Gaussian Naive Bayes | 0.7783333333333333|
 
 ## Requirement
